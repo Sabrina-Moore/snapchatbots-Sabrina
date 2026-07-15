@@ -14,3 +14,13 @@ You do not need to setup Spotify because the "songs" are now chatbots!
 
 ## Milestones
 In the scholar Milestone repo follow the steps for Combining Spotify Navigation Lab and Triviachat Lab.
+
+
+## Changes
+Deleted defunct empty files: SongScreen.js. 
+Removed  albumName and duration from song.js
+removed const tempTracks from HomeScreen
+Need to fix developer to accurate other
+Need to fix album cover resizing
+Need to fix terminology (songs to chat, artist to designer)
+

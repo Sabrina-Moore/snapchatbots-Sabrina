@@ -1,16 +1,16 @@
 import { FlatList, View, StyleSheet } from "react-native";
 import { Themes } from "../assets/Themes";
-import Song from "./Song";
+
+import ChatbotInfo from "./ChatbotInfo";
 
 const renderChat = ({ item, index }) => (
   // this is a "quick and dirty" hack for the moment, we'll want to make a new component later
-  <Song
+    <ChatbotInfo
     index={index}
+    id={item.id}
+    name={item.name}
+    developer={item.developer}
     imageUrl={item.imageUrl}
-    songTitle={item.name}
-    songArtists={[{ name: "developer" }]}
-    albumName={item.id}
-    duration={1000}
   />
 );
 
@@ -20,7 +20,7 @@ export default function ChatList({ chats }) {
     <View style={styles.container}>
       <FlatList
         data={chats}
-        renderItem={(item, index) => renderChat(item, index)}
+        renderItem={renderChat}
         keyExtractor={(item) => item.name}
       />
     </View>

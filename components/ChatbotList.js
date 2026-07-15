@@ -7,28 +7,30 @@ import {
   Pressable,
 } from "react-native";
 import { Themes } from "../assets/Themes";
-import Song from "./Song";
+import ChatbotInfo from "./ChatbotInfo";
 import { useNavigation } from "@react-navigation/native";
+import { CHATBOTS } from "../screens/ChatScreen";
 
-const renderSong = ({ item, index }) => (
-  <Song
+const chatbots = Object.values(CHATBOTS);
+
+const renderChatbot = ({ item, index }) => (
+  <ChatbotInfo
     index={index}
+    id={item.id}
+    name={item.name}
+    developer={item.developer}
     imageUrl={item.imageUrl}
-    songTitle={item.songTitle}
-    songArtists={item.songArtists}
-    albumName={item.albumName}
-    duration={item.duration}
   />
 );
 
-const SongList = ({ tracks }) => {
-  // console.log("artist", tracks[0].songArtists);
+const ChatbotList = ({ chat }) => {
+ console.log("developer", chatbots);
   return (
     <View style={styles.container}>
       <FlatList
-        data={tracks}
-        renderItem={(item, index) => renderSong(item, index)}
-        keyExtractor={(item) => item.songTitle}
+        data={chatbots}
+        renderItem={renderChatbot}
+        keyExtractor={(item) => item.id}
       />
     </View>
   );
@@ -47,4 +49,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SongList;
+export default ChatbotList;
