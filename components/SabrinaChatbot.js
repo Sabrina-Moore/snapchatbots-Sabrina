@@ -10,6 +10,10 @@ const CHATBOT_USER_OBJ = {
 
 //--------------------------------------------------------------------
 
+//TO DO: Define better naming conventions - more comments 
+//for states and variables
+
+
 export default function SabrinaChatbot() {
   const [messages, setMessages] = useState([]);
 
@@ -39,7 +43,7 @@ export default function SabrinaChatbot() {
     if (messages.length < 1) {
       // Add a "starting message" when chat UI first loads
       addBotMessage(
-        "Hello, welcome to simple trivia! Say 'Yes' when you're ready to play!",
+        "Hello, welcome to Lord of the Rings trivia! Say 'Yes' when you're ready to play!",
       );
     }
   }, []);
@@ -73,7 +77,7 @@ export default function SabrinaChatbot() {
     let message = userMessages[0].text;
 
     // PRE GAME STATUS
-   
+
       if(!gameActive){ //round 0
       if (message !== "Yes") {
         setGameActive(false);
@@ -81,7 +85,6 @@ export default function SabrinaChatbot() {
       } else if (message == "Yes"){
         setGameActive(true);
         addBotMessage("Let's play a Lord of The Rings trivia game!");
-        addBotMessage("Write each answer as a word and do not include punctuation.");
         addBotMessage(triviaQuestions[questionIndex].question); //first question
       }
     } 
@@ -94,27 +97,30 @@ export default function SabrinaChatbot() {
         setValid(isCorrect);
         console.log("User guess: ", message);
       
-
-      if(isCorrect){
-        console.log("I'm in valid check.");
-        addBotMessage("Correct!");
-      }
-      else {
+      if (!isCorrect) {
         console.log("I'm in invalid check.");
         addBotMessage("Incorrect.");
+        //gives more opportunities to guess - add another state for reattempts
+        //reset state every time we move to a new question 
       }
-      //increment to next question
-      const nextIndex = questionIndex + 1;
-      setQuestionIndex(nextIndex);
+      else if (isCorrect){
+          //do I need a conditional here including the rest of the code? 
+          console.log("I'm in valid check.");
+          addBotMessage("Correct!");
+      
+          //increment to next question
+          const nextIndex = questionIndex + 1;
+          setQuestionIndex(nextIndex);
 
-      if (nextIndex < 3){ 
-        addBotMessage(triviaQuestions[nextIndex].question); //prompt next trivia question
-      } else {
-        addBotMessage("Game over. Thank you for playing.");
-        setGameActive(false);
-        resetGame(); //run's resetGame function
+          if (nextIndex < 3){ 
+            addBotMessage(triviaQuestions[nextIndex].question); //prompt next trivia question
+          } else {
+            addBotMessage("Game over. Thank you for playing.");
+            setGameActive(false);
+            resetGame(); //run's resetGame function
+          }
+        }
       }
-    }
   };
     
 //to reset the game

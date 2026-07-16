@@ -4,6 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, SafeAreaView, Platform } from "react-native";
 
 import { getChat } from "../utils/getChatGPT";
+import { gamePrompt } from "./gamePrompt"; 
 
 const CHATBOT_USER_OBJ = {
   _id: 2,
@@ -14,19 +15,12 @@ const CHATBOT_USER_OBJ = {
 
 export default function BasicChatbot() {
 
-  const [messages, setMessages] = useState([]);
+  const [chatHistory, setChatHistory] = useState([]);
 
-  const prompt = [
-  {
-    role: "system",
-    content:
-      "You are now EmojiMovieGPT, a reality game show where contestants play to win it all. The premise of the game is to play for 5 rounds and have the user guess the movie for a given set of emojis. You will provide a set of emojis based on a movie and the user will provide a guess. If the user is correct, they get 1 point. First, ask the user for their name and then start the show! All of your responses should be directly addressed to the player.",
-  },
-];
-
+  //moved gamePrompt to individual component
 
   async function fetchInitialMessage() {
-  const response = await getChat(prompt);
+  const response = await getChat(gamePrompt);
   if (response.error) {
     console.log("RESPONSE ERROR", response);
   } else {
@@ -36,29 +30,21 @@ export default function BasicChatbot() {
     console.log("content: ", content);
 
    addBotMessage(content);
-
   }
 }
 
   useEffect(() => {
     fetchInitialMessage();
-    setMessages([
-      {
-        _id: 1,
-        text: "Hello, welcome to simple trivia! Say 'Yes' when you're ready to play!",
-        createdAt: new Date(),
-        user: CHATBOT_USER_OBJ,
-      },
-    ]);
+
   }, []);
 
+  //appending new messages to the chat history
   const addNewMessage = (newMessages) => {
-    setMessages((previousMessages) => {
-      // console.log("PREVIOUS MESSAGES:", previousMessages);
-      // console.log("NEW MESSAGE:", newMessages);
+    setChatHistory((previousMessages) => {
       return GiftedChat.append(previousMessages, newMessages);
     });
   };
+
 
   const addBotMessage = (text) => {
     addNewMessage([
@@ -75,36 +61,58 @@ export default function BasicChatbot() {
 //test cases:
 //Are all the messages in the right order when we send them to ChatGPT?
 //When sending requests after the initial request, are we giving ChatGPT all the information it needs?
-  const respondToUser = async (userMessages) => {
+  // chatGPT doesn't receive the initial prompt
+
+  const respondToUser = async (userMessages) => { //rename userMessages
     console.log("User message text:", userMessages[0].text);
 
     
-    //need a new array, in the property format for the API request. Use map() 
-    //then call getChat() with the array
-    /* must look like this [
-  {
-    role: "assistant",
-    content: "this is a chatbot message",
-  },
-  {
-    role: "user",
-    content: "this is a user message",
-  },
-]; */
+    //original idea, but had to separate because of the reverse method
+    //new array for API using map() to get the API message 
+    /*const apiMessages = userMessages.map((message) => ({
+      role: message.user._id === 1 ? "user": "assistant", //roles either user or assistant
+      content: message.text, //messages to content 
+    })); 
 
-    //addBotMessage("I am da response!");
+    const response = await getChat([...prompt, ...apiMessages.reverse(), userMessages[0].text); 
+    */
+
+    const formattedMessage = chatHistory.map((message) => ({
+      role: message.user._id === 1 ? "user": "assistant", //roles either user or assistant
+      content: message.text //messages to content 
+    }));
+
+    const apiMessages = [
+      ...gamePrompt, ...formattedMessage.reverse(), 
+      {role: "user", content: userMessages[0].text}
+    ];
+
+    console.log(apiMessages);
+
+    //call getChat() with the array
+    const response = await getChat(apiMessages); 
+
+
+    if(!response.error){ //if no errors, bot replies
+      const reply = response.choices[0].message.content;
+       addBotMessage(reply);
+    }
+    else {
+      addBotMessage("Unexpected error.");
+    }
+
   };
 
-  const onSend = useCallback((messages = []) => {
-    addNewMessage(messages);
+  const onSend = useCallback((chatHistory = []) => {
+    addNewMessage(chatHistory);
   }, []);
 
   return (
     <GiftedChat
-      messages={messages}
-      onSend={(messages) => {
-        onSend(messages);
-        setTimeout(() => respondToUser(messages), 1000);
+      messages={chatHistory}
+      onSend={(newMessages) => {
+        onSend(newMessages);
+        setTimeout(() => respondToUser(newMessages), 1000);
       }}
       user={{
         _id: 1,
