@@ -26,9 +26,6 @@
     "plugins": [
       "expo-status-bar",
       "expo-asset"
-    ],
-    "extra": {
-      "mode": "development"
-    }
+    ]
   }
 }

@@ -4,7 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, SafeAreaView, Platform } from "react-native";
 
 import { getChat } from "../utils/getChatGPT";
-import { gamePrompt } from "./gamePrompt"; 
+import { syfyPrompt } from "./syfyPrompt"; 
 
 const CHATBOT_USER_OBJ = {
   _id: 2,
@@ -17,10 +17,10 @@ export default function BasicChatbot() {
 
   const [chatHistory, setChatHistory] = useState([]);
 
-  //moved gamePrompt to individual component
+  //moved syfyPrompt to individual component
 
   async function fetchInitialMessage() {
-  const response = await getChat(gamePrompt);
+  const response = await getChat(syfyPrompt);
   if (response.error) {
     console.log("RESPONSE ERROR", response);
   } else {
@@ -83,7 +83,7 @@ export default function BasicChatbot() {
     }));
 
     const apiMessages = [
-      ...gamePrompt, ...formattedMessage.reverse(), 
+      ...syfyPrompt, ...formattedMessage.reverse(), 
       {role: "user", content: userMessages[0].text}
     ];
 

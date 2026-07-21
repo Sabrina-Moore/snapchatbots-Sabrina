@@ -24,3 +24,7 @@ Need to fix developer to accurate other
 Need to fix album cover resizing
 Need to fix terminology (songs to chat, artist to designer)
 
+
+Updated prompt and trivia game to both be space related for uniformity. 
+
+

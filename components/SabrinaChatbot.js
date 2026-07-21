@@ -25,17 +25,40 @@ export default function SabrinaChatbot() {
 
   const [questionIndex, setQuestionIndex] = useState(0);
 
+  const [attempt, setAttempt] = useState(0); //number of attempts to guess if incorrect
+
+  const [score, setScore] = useState(0); //for point tracking
+
 
   const triviaQuestions = [
       { 
-        question: "What is the creature that attacks the fellowship in the Mines of Moria, leading to the famous line, 'You shall not pass!'?",
-        answer: "Balrog"},
+        question: "What is the largest planet in our solar system??",
+        answer: "Jupiter"},
       {
-        question: "How many members are in the Fellowship of the Ring? Write number as a word.",
-        answer: "Nine"},
+        question: "How many planets are in our solar system?",
+        answer: "Eight"},
       {
-        question: "What is the name of the dark lord who created the One Ring?",
-        answer: "Sauron"},
+        question: "What planet do we think formerly had a ring system?",
+        answer: "Earth"},
+      {
+        question: "Which planet rotates on its side?",
+        answer: "Uranus"},
+      {
+        question: "What is the edge of the solar system called, where the Sun's magnetic field ends? Voyager 2 crossed this threshold in 2018.",
+        answer: "Heliosphere"},
+      {
+        question: "What planets rotate in the opposite direction? List one.",
+        answer: ["Venus", "Uranus"]},
+      {
+        question: "On which planet is its day longer than its year?",
+        answer: "Mercury"},
+      {
+        question: "What protects earth from the sun's radiation?",
+        answer: ["Magnetosphere", "Atmosphere"]},
+        {
+        question: "What four planets have rings? List one.",
+        answer: ["Jupiter", "Saturn", "Uranus", "Neptune"]},
+
     ];
 
 
@@ -43,7 +66,7 @@ export default function SabrinaChatbot() {
     if (messages.length < 1) {
       // Add a "starting message" when chat UI first loads
       addBotMessage(
-        "Hello, welcome to Lord of the Rings trivia! Say 'Yes' when you're ready to play!",
+        "Hello, welcome to 'Space Trivia'! Say 'Yes' when you're ready to play!",
       );
     }
   }, []);
@@ -79,12 +102,12 @@ export default function SabrinaChatbot() {
     // PRE GAME STATUS
 
       if(!gameActive){ //round 0
-      if (message !== "Yes") {
+      if (message.toLowerCase() !== "yes") {
         setGameActive(false);
         addBotMessage("Please enter 'Yes' to start.");
-      } else if (message == "Yes"){
+      } else if (message.toLowerCase() == "yes"){
         setGameActive(true);
-        addBotMessage("Let's play a Lord of The Rings trivia game!");
+        addBotMessage("Let's play! Answer these trivia questions about the planets and the solar system. Numbers and symbols are invalid.");
         addBotMessage(triviaQuestions[questionIndex].question); //first question
       }
     } 
@@ -92,33 +115,66 @@ export default function SabrinaChatbot() {
       if(gameActive){    //if inside game - run rounds
         console.log("run game");
 
-        const isCorrect = message.toLowerCase().trim() === triviaQuestions[questionIndex].answer.toLowerCase();
-        
+        const MAX_ATTEMPTS = 3;
+        const currentAnswer = triviaQuestions[questionIndex].answer; //variable to hold the answer to the question
+
+        // to allow array of answers for multiple choices
+        const acceptedAnswers = Array.isArray(currentAnswer)
+          ? currentAnswer : [currentAnswer];
+
+        const userGuess = message.toLowerCase().trim();
+
+        // const isCorrect = message.toLowerCase().trim() === currentAnswer.toLowerCase();
+
+
+        const isCorrect = acceptedAnswers.some(
+          (ans) => ans.toLowerCase().trim() === userGuess
+        );
+
         setValid(isCorrect);
         console.log("User guess: ", message);
-      
-      if (!isCorrect) {
-        console.log("I'm in invalid check.");
-        addBotMessage("Incorrect.");
-        //gives more opportunities to guess - add another state for reattempts
-        //reset state every time we move to a new question 
-      }
-      else if (isCorrect){
-          //do I need a conditional here including the rest of the code? 
-          console.log("I'm in valid check.");
-          addBotMessage("Correct!");
-      
-          //increment to next question
-          const nextIndex = questionIndex + 1;
-          setQuestionIndex(nextIndex);
 
-          if (nextIndex < 3){ 
+        //moving from question to question and resetting states
+        const advanceToNextQuestion = () => {
+
+        //increment to next question
+        const nextIndex = questionIndex + 1;
+        setQuestionIndex(nextIndex);
+    
+        setAttempt(0); // reset attempts for the new question
+
+        if (nextIndex < triviaQuestions.length){ 
             addBotMessage(triviaQuestions[nextIndex].question); //prompt next trivia question
           } else {
-            addBotMessage("Game over. Thank you for playing.");
+            addBotMessage(`Game over. Thank you for playing. You earned ${score} points!`);
             setGameActive(false);
             resetGame(); //run's resetGame function
           }
+        }
+
+      
+      if (!isCorrect) {
+        console.log("I'm in invalid check.");
+        const guessesAttempted = attempt +1;
+        setAttempt(guessesAttempted);
+
+        if(guessesAttempted >= MAX_ATTEMPTS){
+          const revealAnswer = acceptedAnswers.join(" and ");
+          addBotMessage(`Incorrect. Out of tries. The answer was ${revealAnswer}.`);
+          advanceToNextQuestion();
+        } else {
+          const remaining = MAX_ATTEMPTS - guessesAttempted;
+          addBotMessage(`Incorrect. You have ${remaining} ${remaining === 1 ? "try" : "tries"} left.`);
+        }
+      } else if (isCorrect){
+          //do I need a conditional here including the rest of the code? 
+          console.log("I'm in valid check.");
+          const pointsEarned = 5;
+          setScore((prevScore) => prevScore + pointsEarned);
+          const revealAnswer = acceptedAnswers.join(" and ");
+          addBotMessage(`Correct! The answer was ${revealAnswer}.`);
+          addBotMessage(`+ ${pointsEarned} points.`);
+          advanceToNextQuestion();
         }
       }
   };

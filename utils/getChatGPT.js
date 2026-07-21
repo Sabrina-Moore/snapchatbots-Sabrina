@@ -1,7 +1,7 @@
 var myHeaders = new Headers();
 myHeaders.append("Content-Type", "application/json");
 myHeaders.append("Accept", "application/json");
-myHeaders.append("Authorization", "Bearer API_Key_Here");
+myHeaders.append("Authorization", "Bearer API_GOES_HERE");
 
 export const getChat = async (messages) => {
   const raw = JSON.stringify({

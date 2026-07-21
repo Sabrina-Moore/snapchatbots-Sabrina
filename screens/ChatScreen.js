@@ -13,6 +13,22 @@ import AlexChatbot from "../components/AlexChatbot";
 
 // prettier-ignore
 export const CHATBOTS = {
+  "SabrinaChatbot":{
+    index: 2,
+    id: "SabrinaChatbot",
+    name: "Space Trivia",
+    developer: "Sabrina Moore",
+    imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYwCplmze5eK_trm4EOf2YbrWZhdpuEBYSTuS1WMtw4Q&s=10",
+    component: SabrinaChatbot,
+  },
+  "BasicChatbot": {
+    index: 4, 
+    id: "BasicChatbot",
+    name: "NASA Trivia Game",
+    developer: "default",
+    imageUrl: "https://www.nasa.gov/wp-content/uploads/2023/04/nasa-logo-web-rgb.png",
+    component: BasicChatbot,
+  },
   "AlexChatbot": {
     index: 1,
     id: "AlexChatbot",
@@ -21,14 +37,6 @@ export const CHATBOTS = {
     imageUrl: "https://img.magnific.com/premium-vector/cute-rubber-duck-yellow-duck-cartoon-vector-illustration_773815-284.jpg",
     component: AlexChatbot,
   },
-  "SabrinaChatbot":{
-    index: 2,
-    id: "SabrinaChatbot",
-    name: "Lord of the Rings Trivia",
-    developer: "Sabrina Moore",
-    imageUrl: "https://pbs.twimg.com/media/GTWL8NKW0AAOAE-.jpg",
-    component: SabrinaChatbot,
-  },
   "AlexisChatbot": {
     index: 3, 
     id: "AlexisChatbot",
@@ -36,14 +44,6 @@ export const CHATBOTS = {
     developer: "Alexis Gonzalez",
     imageUrl: "https://img.freepik.com/free-vector/cute-dog-robot-cartoon-character-animal-technology-isolated_138676-3143.jpg?w=150",
     component: AlexisChatbot,
-  },
-  "BasicChatbot": {
-    index: 4, 
-    id: "BasicChatbot",
-    name: "React Native Chatbot",
-    developer: "default",
-    imageUrl: "https://loremflickr.com/140/140",
-    component: BasicChatbot,
   },
 };
 
